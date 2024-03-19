@@ -23,8 +23,12 @@ async function printReport() {
       }
 }
 
-async function consume() {
-    //TODO: Constuir a comunicação com a fila 
+async function consume(product) {
+    //TODO: Constuir a comunicação com a fila
+    const removido = report[product.name];
+    report.delete(product.name);
+
+    printReport();
 } 
 
 consume()
