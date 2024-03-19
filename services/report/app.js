@@ -23,12 +23,19 @@ async function printReport() {
       }
 }
 
-async function consume(product) {
-    //TODO: Constuir a comunicação com a fila
-    const removido = report[product.name];
-    report.delete(product.name);
+async function processMessage(msg) {
+    const deliveryData = JSON.parse(msg);
+    try {
+        updateReport(deliveryData);
+        printReport();
+    } catch (error) {
+        console.log(`X ERROR TO PROCESS: ${error.response}`)
+    }
+}
 
-    printReport();
+async function consume() {
+    console.log(`INSCRITO COM SUCESSO NA FILA: ${process.env.RABBITMQ_QUEUE_NAME}`)
+    await (await RabbitMQService.getInstance()).consume(process.env.RABBITMQ_QUEUE_NAME, (msg) => {processMessage(msg)})
 } 
 
 consume()
